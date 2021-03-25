@@ -7,7 +7,9 @@ from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 from rest_framework import serializers
 
-from django_rest_passwordreset.models import get_password_reset_token_expiry_time
+from django_rest_passwordreset.models import (
+    get_password_reset_token_expiry_unit,
+    get_password_reset_token_expiry_time)
 from . import models
 
 __all__ = [
@@ -27,6 +29,7 @@ class PasswordValidateMixin:
 
         # get token validation time
         password_reset_token_validation_time = get_password_reset_token_expiry_time()
+        password_reset_token_validation_unit = get_password_reset_token_expiry_unit()
 
         # find token
         try:
@@ -36,8 +39,12 @@ class PasswordValidateMixin:
             raise Http404(_("The OTP password entered is not valid. Please check and try again."))
 
         # check expiry date
-        expiry_date = reset_password_token.created_at + timedelta(
-            hours=password_reset_token_validation_time)
+        if password_reset_token_validation_unit == 'minute':
+            expiry_date = reset_password_token.created_at + timedelta(
+                minutes=password_reset_token_validation_time)
+        else:
+            expiry_date = reset_password_token.created_at + timedelta(
+                hours=password_reset_token_validation_time)
 
         if timezone.now() > expiry_date:
             # delete expired token

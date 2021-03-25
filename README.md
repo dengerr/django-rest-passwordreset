@@ -135,6 +135,7 @@ If you want to test this locally, I recommend using some kind of fake mailserver
 The following settings can be set in Djangos ``settings.py`` file:
 
 * `DJANGO_REST_MULTITOKENAUTH_RESET_TOKEN_EXPIRY_TIME` - time in hours about how long the token is active (Default: 24)
+* `DJANGO_REST_MULTITOKENAUTH_RESET_TOKEN_EXPIRY_UNIT` - unit for expiry time (hour, minute) (Default: hour)
 
   **Please note**: expired tokens are automatically cleared based on this setting in every call of ``ResetPasswordRequestToken.post``.
 
